@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>heartbeat</title>
+	<style type="text/css">
+		.heartbeat{
+			position: relative;
+			margin: 200px auto 0 -20px;
+			left: 50%;
+			width: 100px;
+			transform: rotate(45deg);
+			animation: beating 1s infinite linear;
+		}
+		.right{
+			position: absolute;
+			left: -100px;
+			top: 0;
+			height: 200px;
+			width: 200px;
+			background-color: #FF0000;
+			box-shadow: 0 0 30px 2px #FF0000;
+			border-radius: 50%;
+		}
+		.left{
+			position: absolute;
+			left: 0;
+			top: -100px;
+			height: 200px;
+			width: 200px;
+			background-color: #FF0000;
+			box-shadow: 0 0 30px 2px #FF0000;
+			border-radius: 50%;
+		}
+		.middle{
+			position: absolute;
+			height: 200px;
+			width: 200px;
+			background-color: #FF0000;
+			box-shadow: 0 0 40px 7px #FF0000;
+		}
+		.text{
+			z-index: 999;
+			position: absolute;
+			width: 200px;
+			line-height: 40px;
+			top: 80px;
+			left: 0px;
+			text-align: center;
+			transform: rotate(-45deg);
+			font-size: 70px;
+			color: #fff;
+		}
+		.btns{
+			position: absolute;
+			display: none;
+			left: 0;
+			right: 0;
+			top: 510px;
+			width: 100%;
+			text-align: center;
+			margin: 0 auto;
+		}
+		.btns .btn{
+			display: inline-block;
+			margin: 0 20px;
+			width: 100px;
+			height: 34px;
+			line-height: 34px;
+			font-size: 18px;
+			border: 1px solid #f00;
+			border-radius: 34px;
+			transition: all .3s;
+		}
+		.btns .btn:hover{
+			border-color: #fff;
+			background-color: #f00;
+			color: #fff;
+		}
+		@keyframes beating{
+			0%{transform: rotate(45deg) scale(0.8,0.8); opacity: 1;}
+		    25%{transform: rotate(45deg) scale(1,1); opacity: 0.6;}
+		    100%{transform: rotate(45deg) scale(0.8,0.8); opacity: 1;}
+		}
+	</style>
+	<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		alert('不要生气了好不好');
+		alert('我错了');
+		alert('我真的错了');
+		alert('我的du');
+		alert('不要不理我了嘛');
+		alert('好想你啊');
+		alert('答应我不要生气了');
+		alert('真的真的不要生气了');
+		alert('你答应了？');
+		alert('什么我没听到');
+		alert('什么你不生气了？');
+		alert('我听到你说你不生气了');
+		alert('不要生气了嘛');
+		alert('明天喝一点点好不好');
+		alert('我听到你说好了');
+		alert('那明天去喝一点点啦，嘻嘻');
+		alert('爱你喔');
+		$(document).ready(function () {
+			var i = 0;
+			// 不要生气了好吗
+			var str = '不要生气了好吗';
+			var arr = str.split('');
+			var length = arr.length;
+			$('.text').text(arr[i]);
+			var t = setInterval(function () {
+				if (i < length) {
+					i++;
+					$('.text').fadeOut(500).text(arr[i]).show();
+					console.log(i);
+				} else {
+					clearInterval(t);
+					$('.btns').show();
+				}
+			}, 1000);
+			$('.btn2').click(function() {
+				alert('我就知道你肯定选不好');
+				alert('选（好）好不好嘛');
+			});
+			$('.btn1').click(function() {
+				alert('尽请期待下一个版本哈哈哈哈哈哈哈');
+			});
+		});
+	</script>
+</head>
+<body>
+<div class="heartbeat">
+	<div class="text"></div>
+	<div class="left"></div>
+	<div class="right"></div>
+	<div class="middle"></div>
+</div>
+<div class="btns">
+	<div class="btn btn1">好</div>
+	<div class="btn btn2">不好</div>
+</div>
+</body>
+</html>
