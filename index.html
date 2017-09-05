@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>du的每晚测试</title>
+	<style type="text/css">
+		html, body{
+			height: 100%;
+			font-family: '微软雅黑';
+			background-color: #fff;
+			overflow: hidden;
+		}
+		*{
+			padding: 0;
+			margin: 0;
+			font-size: 100%;
+		}
+		.formula{
+			display: none;
+			position: relative;
+			margin-top: 60px;
+			margin-bottom: 60px;
+			left: -400px;
+			line-height: 60px;
+			height: 60px;
+			width: 400px;
+			font-size: 48px;
+			font-weight: 200;
+			color: #ddd;
+		}
+		.result{
+			display: none;
+			width: 200px;
+			margin: 0 auto;
+			text-align: center;
+			font-size: 0;
+		}
+		.result .title{
+			font-size: 20px;
+			color: #fff;
+		}
+		.result .text{
+			margin: 0 auto;
+			height: 58px;
+			width: 100px;
+			border: 1px solid #add;
+			border-radius: 5px;
+			font-size: 32px;
+		}
+		.select{
+			position: absolute;
+			top: 50px;
+			left: 0;
+			width: 100%;
+		}
+		.select .select-h1{
+			margin: 0 8%;
+			line-height: 58px;
+			font-size: 32px;
+			font-weight: 200;
+		}
+		.select .rule{
+			margin: 20px 8%;
+			word-break: break-all;
+			font-size: 16px;
+			color: #444;
+		}
+		.select .btn{
+			cursor: pointer;
+			display: inline-block;
+			margin: 20px 8%;
+			padding: 0 20px;
+			text-align: center;
+			line-height: 80px;
+			border-radius: 8px;
+			font-size: 46px;
+			border: 1px solid #ddd;
+		}
+		.ready{
+			position: absolute;
+			top: 0;
+			left: 0;
+			display: none;
+			width: 100%;
+			height: 100%;
+			background-color: #71D38C;
+		}
+		.ready .num{
+			width: 200px;
+			height: 100px;
+			margin: 0 auto;
+			vertical-align: middle;
+			text-align: center;
+			font-size: 140px;
+			color: #fff;
+		}
+		.currentScore{
+			display: none;
+			width: 70%;
+			margin: 0 auto;
+			border-collapse: collapse;
+			border: 1px solid #000;
+			font-size: 18px;
+		}
+		.currentScore th{
+			text-align: center;
+			padding: 3px 5px;
+			border: 1px solid #fff;
+			font-weight: 700;
+			color: #fff;
+		}
+		.currentScore td{
+			text-align: center;
+			padding: 5px 3px;
+			border: 1px solid #fff;
+			color: #ddd;
+		}
+		.pass-score{
+			position: absolute;
+			top: 420px;
+			margin: 20px 8%;
+			text-align: center;
+			border-collapse: collapse;
+			border:1px solid #fff;
+			font-size: 18px;
+		}
+		.pass-score th{
+			padding: 3px 5px;
+			border: 1px solid #000;
+			font-weight: 700;
+			font-size: 18px;
+		}
+		.pass-score td{
+			padding: 5px 3px;
+			border: 1px solid #000;
+			font-size: 14px;
+		}
+	</style>
+	<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript">	
+		var localStorage = window.localStorage;
+
+		function saveLocal (percent) {
+			if (!localStorage.getItem('history')) {
+				var history = [];
+				localStorage.setItem('history', JSON.stringify(history));
+			}
+			var currentTime = new Date();
+			var str = currentTime.getFullYear() + '-' + (currentTime.getMonth()+1) + '-' + currentTime.getDate() + ' ' + currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+			var hisLocal = JSON.parse(localStorage.getItem('history'));
+			var item = {};
+			item.time = str;
+			item.percent = percent;
+			hisLocal.push(item);
+			localStorage.setItem('history', JSON.stringify(hisLocal));
+		}
+
+		function getLocal () {
+			var local = localStorage.getItem('history');
+			if (!local) {
+				return [];
+			}
+			return JSON.parse(local);
+		}
+
+		function showPassScore () {
+			var his = getLocal();
+			his.forEach(function (val) {
+				var $tr = $('<tr></tr>');
+				var $time = $('<td></td>');
+				$time.text(val.time);
+				var $percent = $('<td></td>');
+				$percent.text(val.percent);
+				$tr.append($time);
+				$tr.append($percent);
+				$('.pass-score').append($tr);
+			});
+		}
+
+		function level1 () {
+			var firstNum = Math.ceil(Math.random()*20);
+			var secondNum = Math.ceil(Math.random()*20);
+			var types = ['-', '+'];
+			var type = types[Math.floor(Math.random()*2)]
+			var arr = [];
+			arr.push(firstNum);
+			arr.push(secondNum);
+			arr.push(type);
+			return arr;
+		}
+
+		function format (formulaArr) {
+			var ret = '';
+			ret = formulaArr[0] + ' ' + formulaArr[2] + ' ' + formulaArr[1] + ' = ?';
+			return ret;
+		}
+
+		function check (formulaArr, result) {
+			var iscorrect = false;
+			if (formulaArr[2] === '-') {
+				iscorrect = formulaArr[0] - formulaArr[1] == result ? true : false;
+			} else if (formulaArr[2] === '+') {
+				iscorrect = formulaArr[0] + formulaArr[1] == result ? true : false;
+			}
+			return iscorrect;
+		}
+
+		function readying (callback) {
+			var i = 3;
+			$('.num').text(i);
+			var t = setInterval(function () {
+				if (i > 1) {
+					i--;
+					$('.num').text(i);
+				} else {
+					clearInterval(t);
+					callback();
+				}
+			}, 1000);
+		}
+
+		function done (length) {
+			var results = [];
+			results.length = length;
+			var i = 0;
+			var arr = level1();
+			$('.formula').text(format(arr));
+			$('.formula').animate({
+				left: '500px'
+			}, 2000, function() {
+				$('.formula').css('left', '-400px');
+				$('.result').show(0, function() {
+					setTimeout(function () {
+						var res = $('.result .text').val();
+						results[i] = check(arr, res);
+						$('.result .text')[0].focus();
+						$('.result .text').val('');
+						$('.result').hide();
+						i++;
+					}, 1500);
+				});
+			});
+			var t = setInterval(function() {
+				if (i < length - 1) {
+					var arr = level1();
+					$('.formula').text(format(arr));
+					$('.formula').animate({
+						left: '500px'
+					}, 2000, function() {
+						$('.formula').css('left', '-400px');
+						$('.result').show(0, function() {
+							setTimeout(function () {
+								var res = $('.result .text').val();
+								results[i] = check(arr, res);
+								$('.result .text').val('');
+								$('.result').hide();
+								// 由于setTimeout，clearInterval在这里之前执行
+								if (i++ === length - 1) {
+									showCurrentScore(results);
+								}
+							}, 1500);
+						});
+					});
+				} else {
+					clearInterval(t);
+				}
+			}, 3000);
+		}
+
+		function showCurrentScore (results) {
+			$('.result').hide();
+			$('.currentScore').show();
+			var correctNum = 0;
+			results.forEach(function(val, i) {
+				if (val) {
+					$('.currentScore td:eq(' + i + ')').text('√');
+					correctNum++;
+				} else {
+					$('.currentScore td:eq(' + i + ')').text('×');
+				}
+			});
+			var correctPercent = correctNum/results.length*100 + '%';
+			$('.currentScore td:last').text(correctPercent);
+			saveLocal(correctPercent);
+		}
+
+		$(document).ready(function() {
+			showPassScore();
+			$('.btn-start').click(function () {
+				$('.select').hide();
+				$('.ready').show();
+				$('.pass-score').hide();
+				readying(function() {
+					$('html, body').css('backgroundColor', '#272822');
+					$('.ready').hide();
+					$('.formula').show();
+					done(10);
+				});
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<div class="formula">
+	</div>
+	<div class="ready"><div class="num"></div></div>
+	<div class="select">
+		<h1 class="select-h1">晚练10题</h1>
+		<p class="rule">
+			1.点击开始按钮后，题目将划过屏幕，题目消失后，出现答题框，答题框将存在1s，请在一秒内填入答案
+		</p>
+		<p class="rule">
+			2.做过的成绩会记录在浏览器中，请使用同一个浏览器做
+		</p>
+		<p class="rule">
+			3.尽量使用手机自带浏览器
+		</p>
+		<div class="btn btn-start">开始</div>
+	</div>
+	<div class="result">
+		<span class="title">答案 </span>
+		<input type="text" class="text" />
+	</div>
+	<table class="currentScore">
+		<tr>
+			<th>1</th>
+			<th>2</th>
+			<th>3</th>
+			<th>4</th>
+			<th>5</th>
+			<th>6</th>
+			<th>7</th>
+			<th>8</th>
+			<th>9</th>
+			<th>10</th>
+			<th>正确率</th>
+		</tr>
+		<tr>
+			<td>×</td>
+			<td>×</td>
+			<td>×</td>
+			<td>×</td>
+			<td>×</td>
+			<td>×</td>
+			<td>×</td>
+			<td>×</td>
+			<td>×</td>
+			<td>×</td>
+			<td>60%</td>
+		</tr>
+	</table>
+	<table class="pass-score">
+		<tr>
+			<th>时间</th>
+			<th>正确率</th>
+		</tr>
+	</table>
+</body>
+
+</html>
